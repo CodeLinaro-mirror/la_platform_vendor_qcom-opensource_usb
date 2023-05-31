@@ -43,6 +43,9 @@ on charger
     setprop sys.usb.config mass_storage
     setprop sys.usb.configfs 1
 
+# TODO: for future trials for 2W as this give very good gain with side-effect
+# of each reboot USB debug need to be enabled from Dev options on
+# property:sys.boot_completed=1
 on boot
     mount configfs none /config
     mkdir /config/usb_gadget/g1 0770

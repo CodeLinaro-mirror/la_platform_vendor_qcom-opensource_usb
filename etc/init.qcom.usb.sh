@@ -28,11 +28,22 @@
 #
 #
 
-# Set platform variables
-soc_hwplatform=`cat /sys/devices/soc0/hw_platform 2> /dev/null`
-soc_machine=`cat /sys/devices/soc0/machine 2> /dev/null`
-soc_machine=${soc_machine:0:2}
+product=`getprop ro.build.product`
+# this reduces 170ms in kpi for this sh during onboot
+if [ $product != "bengal_2w" ]
+then
+   # Set platform variables
+   soc_hwplatform=`cat /sys/devices/soc0/hw_platform 2> /dev/null`
+   soc_machine=`cat /sys/devices/soc0/machine 2> /dev/null`
+   target=`getprop ro.board.platform`
+else
+   soc_hwplatform="IDP"
+   soc_machine="SCUBAIIOT"
+   target="bengal"
+fi
+# we need to read this to support 2 socids
 soc_id=`cat /sys/devices/soc0/soc_id 2> /dev/null`
+soc_machine=${soc_machine:0:2}
 
 #
 # Check ESOC for external modem
@@ -40,8 +51,6 @@ soc_id=`cat /sys/devices/soc0/soc_id 2> /dev/null`
 # Note: currently only a single MDM/SDX is supported
 #
 esoc_name=`cat /sys/bus/esoc/devices/esoc0/esoc_name 2> /dev/null`
-
-target=`getprop ro.board.platform`
 
 #
 # Override USB default composition
