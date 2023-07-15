@@ -26,6 +26,10 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+
+# Changes from Qualcomm Innovation Center are provided under the following license:
+# Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
 #
 
 # Set platform variables
@@ -46,8 +50,9 @@ target=`getprop ro.board.platform`
 #
 # Override USB default composition
 #
-# If USB persist config not set, set default configuration
-if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" != "user" ]; then
+if [ "$(getprop ro.build.type)" != "user" ]; then
+  # If USB persist config not set, set default configuration
+  if [ "$(getprop persist.vendor.usb.config)" == "" ]; then
     if [ "$esoc_name" != "" ]; then
 	  setprop persist.vendor.usb.config diag,diag_mdm,qdss,qdss_mdm,serial_cdev,dpl,rmnet,adb
     else
@@ -101,8 +106,11 @@ if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" 
 		          setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,adb
 		      ;;
 	              "msmnile" | "sm6150" | "trinket" | "lito" | "atoll" | "bengal" | "lahaina" | "holi" | \
-				  "taro" | "kalama" | "pineapple")
+				  "taro" | "kalama" | "pineapple" | "blair")
 			  setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb
+		      ;;
+		      "gen4")
+			  setprop persist.vendor.usb.config adb
 		      ;;
 	              *)
 		          setprop persist.vendor.usb.config diag,adb
@@ -115,6 +123,9 @@ if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" 
 	      ;;
 	  esac
       fi
+  fi
+else # for user build let persist.sys.usb.config dictate the default composition
+    setprop persist.vendor.usb.config ""
 fi
 
 # This check is needed for GKI 1.0 targets where QDSS is not available
@@ -184,54 +195,5 @@ esac
 # Initialize UVC conifguration.
 #
 if [ -d /config/usb_gadget/g1/functions/uvc.0 ]; then
-	cd /config/usb_gadget/g1/functions/uvc.0
-
-	echo 3072 > streaming_maxpacket
-	echo 1 > streaming_maxburst
-	mkdir control/header/h
-	ln -s control/header/h control/class/fs/
-	ln -s control/header/h control/class/ss
-
-	mkdir -p streaming/uncompressed/u/360p
-	echo "666666\n1000000\n5000000\n" > streaming/uncompressed/u/360p/dwFrameInterval
-
-	mkdir -p streaming/uncompressed/u/720p
-	echo 1280 > streaming/uncompressed/u/720p/wWidth
-	echo 720 > streaming/uncompressed/u/720p/wWidth
-	echo 29491200 > streaming/uncompressed/u/720p/dwMinBitRate
-	echo 29491200 > streaming/uncompressed/u/720p/dwMaxBitRate
-	echo 1843200 > streaming/uncompressed/u/720p/dwMaxVideoFrameBufferSize
-	echo 5000000 > streaming/uncompressed/u/720p/dwDefaultFrameInterval
-	echo "5000000\n" > streaming/uncompressed/u/720p/dwFrameInterval
-
-	mkdir -p streaming/mjpeg/m/360p
-	echo "666666\n1000000\n5000000\n" > streaming/mjpeg/m/360p/dwFrameInterval
-
-	mkdir -p streaming/mjpeg/m/720p
-	echo 1280 > streaming/mjpeg/m/720p/wWidth
-	echo 720 > streaming/mjpeg/m/720p/wWidth
-	echo 29491200 > streaming/mjpeg/m/720p/dwMinBitRate
-	echo 29491200 > streaming/mjpeg/m/720p/dwMaxBitRate
-	echo 1843200 > streaming/mjpeg/m/720p/dwMaxVideoFrameBufferSize
-	echo 5000000 > streaming/mjpeg/m/720p/dwDefaultFrameInterval
-	echo "5000000\n" > streaming/mjpeg/m/720p/dwFrameInterval
-
-	echo 0x04 > /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/bmaControls
-
-	mkdir -p streaming/h264/h/960p
-	echo 1920 > streaming/h264/h/960p/wWidth
-	echo 960 > streaming/h264/h/960p/wWidth
-	echo 40 > streaming/h264/h/960p/bLevelIDC
-	echo "333667\n" > streaming/h264/h/960p/dwFrameInterval
-
-	mkdir -p streaming/h264/h/1920p
-	echo "333667\n" > streaming/h264/h/1920p/dwFrameInterval
-
-	mkdir streaming/header/h
-	ln -s streaming/uncompressed/u streaming/header/h
-	ln -s streaming/mjpeg/m streaming/header/h
-	ln -s streaming/h264/h streaming/header/h
-	ln -s streaming/header/h streaming/class/fs/
-	ln -s streaming/header/h streaming/class/hs/
-	ln -s streaming/header/h streaming/class/ss/
+	setprop vendor.usb.uvc.function.init 1
 fi
