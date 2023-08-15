@@ -103,7 +103,7 @@ if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" 
 	              "sdm845" | "sdm710")
 		          setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,adb
 		      ;;
-	              "msmnile" | "sm6150" | "trinket" | "lito" | "atoll" | "bengal" | "lahaina" | "holi" | "taro" | "kalama")
+	              "msmnile" | "sm6150" | "trinket" | "lito" | "atoll" | "bengal" | "lahaina" | "holi" | "taro" | "kalama" | "crow")
 			  setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb
 		      ;;
 	              *)
@@ -187,4 +187,8 @@ esac
 #
 if [ -d /config/usb_gadget/g1/functions/uvc.0 ]; then
 	setprop vendor.usb.uvc.function.init 1
+fi
+
+if [ -d /config/usb_gadget/g1/functions/uac2.0 ]; then
+	setprop vendor.usb.uac2.function.init 1
 fi
