@@ -9,7 +9,11 @@ PRODUCT_PROPERTY_OVERRIDES += vendor.usb.dpl.inst.name=dpl
 
 ifneq ($(filter bengal monaco trinket,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=4e00000.dwc3
-  PRODUCT_PROPERTY_OVERRIDES += ro.boot.usb.dwc3_msm=4e00000.ssusb
+  ifneq ($(filter bengal,$(TARGET_BOARD_PLATFORM)),)
+    PRODUCT_SYSTEM_PROPERTIES += ro.boot.usb.dwc3_msm=4e00000.ssusb
+  else
+    PRODUCT_SYSTEM_PROPERTIES += ro.boot.usb.dwc3_msm=4e00000.hsusb
+  endif
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=a600000.dwc3
 endif
@@ -53,7 +57,7 @@ else
   # USB Gadget HAL is enabled on newer targets and takes the place
   # of the init-based configfs rules for setting USB compositions
   #
-  ifneq ($(filter taro kalama bengal monaco kona trinket,$(TARGET_BOARD_PLATFORM)),)
+  ifneq ($(filter taro kalama bengal monaco kona crow trinket,$(TARGET_BOARD_PLATFORM)),)
     PRODUCT_PROPERTY_OVERRIDES += vendor.usb.use_gadget_hal=1
     PRODUCT_PACKAGES += android.hardware.usb.gadget@1.1-service-qti
     PRODUCT_PACKAGES += usb_compositions.conf
