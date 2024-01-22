@@ -47,6 +47,8 @@ on boot
     mount configfs none /config
     mkdir /config/usb_gadget/g1 0770
     mkdir /config/usb_gadget/g2 0770
+    chown root system  config/usb_gadget/g1
+    chown root system  config/usb_gadget/g2
     mkdir /config/usb_gadget/g1/strings/0x409 0770
     mkdir /config/usb_gadget/g2/strings/0x409 0770
     write /config/usb_gadget/g1/bcdUSB 0x0200
