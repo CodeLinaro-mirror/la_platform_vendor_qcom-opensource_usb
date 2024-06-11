@@ -14,7 +14,7 @@ else
 endif
 
 # QDSS uses SW path on these targets
-ifneq ($(filter lahaina taro blair kalama pineapple sun,$(TARGET_BOARD_PLATFORM)),)
+ifneq ($(filter lahaina taro blair kalama pineapple sun parrot,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss_sw
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss
@@ -36,6 +36,8 @@ endif
 ifneq ($(TARGET_KERNEL_VERSION),$(filter $(TARGET_KERNEL_VERSION),4.9 4.14))
   PRODUCT_PACKAGES += android.hardware.usb-service.qti
 endif
+
+PRODUCT_VENDOR_PROPERTIES += ro.usb.uvc.enabled=true
 
 USB_USES_QMAA = $(TARGET_USES_QMAA)
 ifeq ($(TARGET_USES_QMAA_OVERRIDE_USB),true)

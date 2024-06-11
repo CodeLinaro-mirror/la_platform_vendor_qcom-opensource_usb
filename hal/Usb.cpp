@@ -17,7 +17,7 @@
  * limitations under the License.
  *
  * Changes from Qualcomm Innovation Center are provided under the following license:
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause-Clear
  */
 
@@ -63,6 +63,7 @@ using ::android::base::Trim;
 using ::android::base::ReadFileToString;
 using ::android::base::WriteStringToFile;
 
+static const std::string BACKLIGHT_PATH = "/sys/class/backlight/panel0-backlight/brightness";
 const char GOOGLE_USB_VENDOR_ID_STR[] = "18d1";
 const char GOOGLE_USBC_35_ADAPTER_UNPLUGGED_ID_STR[] = "5029";
 
@@ -71,6 +72,7 @@ static void checkUsbInHostMode();
 static void checkUsbDeviceAutoSuspend(const std::string& devicePath);
 static bool checkUsbInterfaceAutoSuspend(const std::string& devicePath,
         const std::string &intf);
+static bool checkUsbHidOnly(const std::string& devicePath);
 
 static void getUsbControllerPath(std::string &controllerPath) {
   std::string controllerName = GetProperty(USB_CONTROLLER_PROP, "");
@@ -320,6 +322,66 @@ ScopedAStatus Usb::switchRole(const std::string &portName, const PortRole &newRo
   return ScopedAStatus::ok();
 }
 
+static void manageHidPower(const std::string& path, bool allow) {
+  std::string runtimeState;
+  bool ret = false;
+
+  ret = ReadFileToString(path + "/power/runtime_status", &runtimeState);
+  if (ret && runtimeState == "active") {
+    ret = WriteStringToFile("on", path + "/power/control");
+    if (!ret)
+          return;
+  }
+
+  ret = WriteStringToFile(allow ? "3000" : "60000", path + "/power/autosuspend_delay_ms");
+  if (!ret)
+        return;
+
+  WriteStringToFile("auto", path + "/power/control");
+}
+
+/*
+ * Checks for if the display is off.  This is useful for triggerring
+ * USB suspend routines for certain use cases.  One example is when a USB
+ * HID device, such as a mouse or keyboard is connected, and to avoid
+ * frequent bus suspend/resume iterations if the display is on.
+ */
+static bool isDisplayOff(void) {
+  std::string brightness;
+
+  if (!ReadFileToString(BACKLIGHT_PATH, &brightness)) {
+    ALOGE("isDisplayOff: Failed to open brightness file");
+    return false;
+  }
+
+  if (std::stoi(brightness) > 0)
+    return false;
+
+  return true;
+}
+
+static void removeUsbHIDDevice(struct Usb *usb, const std::string &devicePath) {
+  usb->hidDevs.remove(devicePath);
+}
+
+static void checkUsbHIDDevice(struct Usb *usb, std::string&& devicePath) {
+  if (checkUsbHidOnly(devicePath)) {
+    /*
+     * Keep track of connected devices with HID interfaces, so that based
+     * on display brightness events, the autosuspend timer can be adjusted
+     * for all HID devices.
+     */
+    usb->hidDevs.push_back(std::move(devicePath));
+  }
+}
+
+static void handleDisplayEvent(struct Usb *usb) {
+  bool displayOff = isDisplayOff();
+
+  for (auto dev : usb->hidDevs)
+      manageHidPower(dev, displayOff);
+}
+
 static Status getAccessoryConnected(const std::string &portName, std::string &accessory) {
   std::string filename = "/sys/class/typec/" + portName + "-partner/accessory_mode";
 
@@ -490,10 +552,13 @@ Status Usb::getPortStatusHelper(std::vector<PortStatus> &currentPortStatus,
       status.usbDataStatus.push_back(usbDataDisabled ? UsbDataStatus::DISABLED_FORCE :
                                        UsbDataStatus::ENABLED);
 
+      status.powerTransferLimited = limitedPower;
+
       ALOGI("%d:%s connected:%d canChangeMode:%d canChangeData:%d canChangePower:%d "
-            "usbDataDisabled:%d",
+            "usbDataDisabled:%d, powerTransferLimited:%d",
             i, portName.c_str(), connected, status.canChangeMode,
-            status.canChangeDataRole, status.canChangePowerRole, usbDataDisabled);
+            status.canChangeDataRole, status.canChangePowerRole, usbDataDisabled,
+            limitedPower);
 
       status.supportsEnableContaminantPresenceProtection = false;
       status.supportsEnableContaminantPresenceDetection = false;
@@ -682,6 +747,7 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
   static std::regex udc_regex("(add|remove)@/devices/platform/soc/.*/" + gadgetName +
                               "/udc/" + gadgetName);
   static std::regex offline_regex("offline@(/devices/platform/.*dwc3/xhci-hcd\\.\\d\\.auto/usb.*)");
+  static std::regex backlight_regex("change@(/devices/platform/soc/.*qcom,mdss_mdp/backlight/panel0-backlight)");
   static std::regex dwc3_regex("\\/(\\w+.\\w+usb)/.*dwc3");
 
   n = uevent_kernel_multicast_recv(uevent_fd.get(), msg, UEVENT_MSG_LEN);
@@ -707,6 +773,7 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
       std::csub_match devpath = match[1];
       std::csub_match intfpath = match[2];
       checkUsbInterfaceAutoSuspend("/sys" + devpath.str(), intfpath.str());
+      checkUsbHIDDevice(usb, "/sys" + devpath.str());
     }
   } else if (std::regex_match(msg, match, udc_regex)) {
     if (!strncmp(msg, "add", 3)) {
@@ -716,8 +783,20 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
       // In case ADB is not enabled, we need to manually re-bind the UDC to
       // ConfigFS since ADBD is not there to trigger it (sys.usb.ffs.ready=1)
       if (GetProperty("init.svc.adbd", "") != "running") {
+        std::string udcName;
+        int retry = 5;
+
         ALOGI("Binding UDC %s to ConfigFS", gadgetName.c_str());
-        WriteStringToFile(gadgetName, "/config/usb_gadget/g1/UDC");
+
+        while (retry >= 0) {
+          WriteStringToFile(gadgetName, "/config/usb_gadget/g1/UDC");
+          ReadFileToString("/config/usb_gadget/g1/UDC", &udcName);
+          if (Trim(udcName) == gadgetName)
+            break;
+          ALOGI("Retrying UDC bind for %s", gadgetName.c_str());
+          std::this_thread::sleep_for(std::chrono::milliseconds(50));
+          retry--;
+        }
       }
     } else {
       // When the UDC is removed, the ConfigFS gadget will no longer be
@@ -728,15 +807,6 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
       // Setting this property stops ADBD from proceeding with the retry.
       SetProperty(VENDOR_USB_ADB_DISABLED_PROP, "1");
     }
-  }  else if (std::regex_match(msg, match, offline_regex)) {
-	 if(std::regex_search (msg, match, dwc3_regex))
-	 {
-		 dwc3_sysfs = USB_MODE_PATH + match.str(1) + "/mode";
-		 ALOGE("ERROR:restarting in host mode");
-		 WriteStringToFile("none", dwc3_sysfs);
-		 sleep(1);
-		 WriteStringToFile("host", dwc3_sysfs);
-	 }
  } else if (std::regex_match(msg, match, bus_reset_regex)) {
     std::csub_match devpath = match[1];
     std::csub_match intfpath = match[2];
@@ -762,6 +832,9 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       WriteStringToFile("1", "/sys" + parentpath.str() + "/authorized");
     }
+    removeUsbHIDDevice(usb, "/sys" + devpath.str());
+  } else if (std::regex_match(msg, match, backlight_regex)) {
+    handleDisplayEvent(usb);
   }
 }
 
@@ -1027,6 +1100,38 @@ static bool canUsbDeviceAutoSuspend(const std::string &devicePath) {
 }
 
 /*
+ * Checks to see if the added device is a USB device that contains only
+ * USB HID interfaces.  For devices, such as USB headsets that have volume
+ * control, avoid modifying the autosuspend timer and introducing the
+ * logic to check for display brightness.
+ */
+static bool checkUsbHidOnly(const std::string& devicePath) {
+  DIR *dp = opendir(devicePath.c_str());
+  bool hidOnly = false;
+
+  if (dp != NULL) {
+    struct dirent *intfDir;
+    int interfaceClass;
+    int ret;
+
+    while ((intfDir = readdir(dp))) {
+      if (intfDir->d_type == DT_DIR && strchr(intfDir->d_name, ':')) {
+        interfaceClass = getDeviceInterfaceClass(devicePath, intfDir->d_name);
+        if (interfaceClass == USB_CLASS_HID) {
+           hidOnly = true;
+        } else {
+           hidOnly = false;
+           break;
+        }
+      }
+    }
+    closedir(dp);
+  }
+
+  return hidOnly;
+}
+
+/*
  * function to consume USB device plugin events (on receiving a
  * USB device path string), and enable autosupend on the USB device if
  * necessary.
@@ -1052,6 +1157,10 @@ static bool checkUsbInterfaceAutoSuspend(const std::string& devicePath,
 
   // allow autosuspend for certain class devices
   switch (interfaceClass) {
+    case USB_CLASS_HID:
+       // If display is on, don't allow immediate autosuspend of HID dev
+       if (checkUsbHidOnly(devicePath) && !isDisplayOff())
+          manageHidPower(devicePath, false);
     case USB_CLASS_AUDIO:
     case USB_CLASS_HUB:
       ALOGI("auto suspend usb interfaces %s", devicePath.c_str());
@@ -1072,11 +1181,45 @@ static bool checkUsbInterfaceAutoSuspend(const std::string& devicePath,
 ScopedAStatus Usb::limitPowerTransfer(const std::string& in_portName, bool in_limit,
     int64_t in_transactionId) {
   std::scoped_lock lock(mLock);
+  aidl::android::hardware::usb::Status status = Status::SUCCESS;
+  int ret;
+
+  ALOGI("limitPowerTransfer in_limit: %d", in_limit);
+
+  if (in_limit) {
+    ret = WriteStringToFile("0", "/sys/class/qcom-battery/restrict_cur");
+    if (!ret) {
+      ALOGE("failed to limit USB charge current");
+      status = Status::ERROR;
+    }
+
+    ret = WriteStringToFile("1", "/sys/class/qcom-battery/restrict_chg");
+    if (!ret) {
+      ALOGE("failed to limit USB charge current");
+      status = Status::ERROR;
+    }
+  } else {
+    ret = WriteStringToFile("0", "/sys/class/qcom-battery/restrict_chg");
+    if (!ret) {
+      ALOGE("failed to de-limit USB charge current");
+      status = Status::ERROR;
+    }
+  }
+
+  limitedPower = in_limit;
+
   if (mCallback && in_transactionId >= 0) {
+    std::vector<PortStatus> currentPortStatus;
     ScopedAStatus ret = mCallback->notifyLimitPowerTransferStatus(in_portName,
-        false, Status::NOT_SUPPORTED, in_transactionId);
+        in_limit, status, in_transactionId);
     if (!ret.isOk())
       ALOGE("limitPowerTransfer error %s", ret.getDescription().c_str());
+
+    status = getPortStatusHelper(currentPortStatus, mContaminantStatusPath);
+    ret = mCallback->notifyPortStatusChange(currentPortStatus,
+          status);
+    if (!ret.isOk())
+      ALOGE("queryPortStatus error %s", ret.getDescription().c_str());
   } else {
     ALOGE("Not notifying the userspace. Callback is not set");
   }
@@ -1143,6 +1286,7 @@ out:
 }  // namespace android
 }  // namespace aidl
 
+#ifndef __LIBFUZZON_LOCAL__
 int main() {
     using ::aidl::android::hardware::usb::Usb;
 
@@ -1156,3 +1300,26 @@ int main() {
     ABinderProcess_joinThreadPool();
     return -1; // Should never be reached
 }
+
+#else
+
+#include <fuzzbinder/libbinder_ndk_driver.h>
+#include <fuzzer/FuzzedDataProvider.h>
+
+std::shared_ptr<::aidl::android::hardware::usb::Usb> service;
+
+extern "C" int LLVMFuzzerInitialize(int* argc, char*** argv) {
+    service = ndk::SharedRefBase::make<::aidl::android::hardware::usb::Usb>();
+    return 0;
+}
+
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
+    if( service == nullptr ) return 0;
+
+    FuzzedDataProvider provider(data, size);
+    android::fuzzService(service->asBinder().get(),std::move(provider));
+
+    return 0;
+}
+
+#endif
