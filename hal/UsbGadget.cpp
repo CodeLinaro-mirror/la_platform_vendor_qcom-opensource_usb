@@ -201,6 +201,7 @@ static std::string qdssFuncname(const char *debug) {
 
 static std::map<std::string, std::function<std::string()> > supported_funcs {
   { "adb",              [](){ return "ffs.adb"; } },
+  { "qxr",              [](){ return "ffs.qxr"; } },
   { "ccid",             [](){ return "ccid.ccid"; } },
   { "diag",             [](){ return GetProperty(DIAG_FUNC_NAME_PROP, "diag") + ".diag"; } },
   { "diag_cnss",        [](){ return GetProperty(DIAG_FUNC_NAME_PROP, "diag") + ".diag_mdm2"; } },
