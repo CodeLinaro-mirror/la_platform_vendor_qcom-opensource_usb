@@ -58,10 +58,10 @@ if [ "$(getprop persist.vendor.usb.config)" == "" -a "$(getprop ro.build.type)" 
     else
 	  case "$(getprop ro.baseband)" in
 	      "apq")
-	        if [ "$target" == "neo" ]; then
-				setprop persist.vendor.usb.config diag,qdss,adb
-			elif [ "$target" == "anorak" ]; then
-				setprop persist.vendor.usb.config diag,qdss,qxr,adb
+		if [ "$target" == "anorak" ] && [ -f "/vendor/bin/hw/sxrservice" ]; then
+			setprop persist.vendor.usb.config diag,qdss,qxr,adb
+		elif [ "$target" == "neo" ] || [ "$target" == "anorak" ]; then
+			setprop persist.vendor.usb.config diag,qdss,adb
 		else
 			setprop persist.vendor.usb.config diag,adb
 		fi
