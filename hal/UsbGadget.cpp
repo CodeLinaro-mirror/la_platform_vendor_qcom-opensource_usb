@@ -212,6 +212,7 @@ static std::map<std::string, std::function<std::string()> > supported_funcs {
   { "diag_mdm2",        [](){ return GetProperty(DIAG_FUNC_NAME_PROP, "diag") + ".diag_mdm2"; } },
   { "diag_mdm",         [](){ return GetProperty(DIAG_FUNC_NAME_PROP, "diag") + ".diag_mdm"; } },
   { "dpl",              [](){ return GetProperty(RMNET_FUNC_NAME_PROP, "gsi") + "." + GetProperty(DPL_INST_NAME_PROP, "dpl"); } },
+  { "ipcr",             [](){ return "ffs.ipcr"; } },
   { "mass_storage",     [](){ return "mass_storage.0"; } },
   { "mtp",              [](){ return "ffs.mtp"; } },
   { "ncm",              [](){ return "ncm.0"; } },
