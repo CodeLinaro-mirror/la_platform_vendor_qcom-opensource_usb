@@ -211,6 +211,13 @@ if [ -d /config/usb_gadget/g1/functions/uvc.0 ]; then
 	ln -s control/header/h control/class/fs/
 	ln -s control/header/h control/class/ss
 
+	mkdir -p control/extensions/xu.0
+	echo 4 > control/extensions/xu.0/baSourceID
+	echo 1 > control/extensions/xu.0/bNrInpins
+	echo 5 > control/extensions/xu.0/bNumControls
+	echo 2 > control/extensions/xu.0/bControlSize
+	echo -e "0xFF\n0xFF\n" > control/extensions/xu.0/bmControls
+
 	mkdir -p streaming/uncompressed/u/360p
 	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/360p/dwFrameInterval
 	echo 333333 > streaming/uncompressed/u/360p/dwDefaultFrameInterval
