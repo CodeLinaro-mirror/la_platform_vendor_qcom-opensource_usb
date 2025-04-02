@@ -193,173 +193,176 @@ esac
 #
 # Initialize UVC0 conifguration.
 #
-if [ -d /config/usb_gadget/g1/functions/uvc.0 ]; then
-	cd /config/usb_gadget/g1/functions/uvc.0
+for i in 0 1
+do
+	if [ -d /config/usb_gadget/g1/functions/uvc.$i ]; then
+		cd /config/usb_gadget/g1/functions/uvc.$i
 
-	echo 3072 > streaming_maxpacket
-	echo 6 > streaming_maxburst
-	mkdir control/header/h
-	ln -s control/header/h control/class/fs/
-	ln -s control/header/h control/class/ss
+		echo 3072 > streaming_maxpacket
+		echo 6 > streaming_maxburst
+		mkdir control/header/h
+		ln -s control/header/h control/class/fs/
+		ln -s control/header/h control/class/ss
 
-	mkdir -p control/extensions/xu.0
-	echo 4 > control/extensions/xu.0/baSourceID
-	echo 1 > control/extensions/xu.0/bNrInpins
-	echo 5 > control/extensions/xu.0/bNumControls
-	echo 2 > control/extensions/xu.0/bControlSize
-	echo -e "0xFF\n0xFF\n" > control/extensions/xu.0/bmControls
+		mkdir -p control/extensions/xu.0
+		echo 4 > control/extensions/xu.0/baSourceID
+		echo 1 > control/extensions/xu.0/bNrInpins
+		echo 5 > control/extensions/xu.0/bNumControls
+		echo 2 > control/extensions/xu.0/bControlSize
+		echo -e "0xFF\n0xFF\n" > control/extensions/xu.0/bmControls
 
-	mkdir -p streaming/uncompressed/u/360p
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/360p/dwFrameInterval
-	echo 333333 > streaming/uncompressed/u/360p/dwDefaultFrameInterval
+		mkdir -p streaming/uncompressed/u/360p
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/360p/dwFrameInterval
+		echo 333333 > streaming/uncompressed/u/360p/dwDefaultFrameInterval
 
-	mkdir -p streaming/uncompressed/u/720p
-	echo 1280 > streaming/uncompressed/u/720p/wWidth
-	echo 720 > streaming/uncompressed/u/720p/wHeight
-	echo 29491200 > streaming/uncompressed/u/720p/dwMinBitRate
-	echo 29491200 > streaming/uncompressed/u/720p/dwMaxBitRate
-	echo 1843200 > streaming/uncompressed/u/720p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/uncompressed/u/720p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/720p/dwFrameInterval
+		mkdir -p streaming/uncompressed/u/720p
+		echo 1280 > streaming/uncompressed/u/720p/wWidth
+		echo 720 > streaming/uncompressed/u/720p/wHeight
+		echo 29491200 > streaming/uncompressed/u/720p/dwMinBitRate
+		echo 29491200 > streaming/uncompressed/u/720p/dwMaxBitRate
+		echo 1843200 > streaming/uncompressed/u/720p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/uncompressed/u/720p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/720p/dwFrameInterval
 
-	mkdir -p streaming/uncompressed/u/1080p
-	echo 1920 > streaming/uncompressed/u/1080p/wWidth
-	echo 1080 > streaming/uncompressed/u/1080p/wHeight
-	echo 66355200 > streaming/uncompressed/u/1080p/dwMinBitRate
-	echo 995328000 > streaming/uncompressed/u/1080p/dwMaxBitRate
-	echo 4147200 > streaming/uncompressed/u/1080p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/uncompressed/u/1080p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/1080p/dwFrameInterval
+		mkdir -p streaming/uncompressed/u/1080p
+		echo 1920 > streaming/uncompressed/u/1080p/wWidth
+		echo 1080 > streaming/uncompressed/u/1080p/wHeight
+		echo 66355200 > streaming/uncompressed/u/1080p/dwMinBitRate
+		echo 995328000 > streaming/uncompressed/u/1080p/dwMaxBitRate
+		echo 4147200 > streaming/uncompressed/u/1080p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/uncompressed/u/1080p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u/1080p/dwFrameInterval
 
-	mkdir -p streaming/uncompressed/u1/360p
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u1/360p/dwFrameInterval
-	echo 333333 > streaming/uncompressed/u1/360p/dwDefaultFrameInterval
+		mkdir -p streaming/uncompressed/u1/360p
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/uncompressed/u1/360p/dwFrameInterval
+		echo 333333 > streaming/uncompressed/u1/360p/dwDefaultFrameInterval
 
-	mkdir -p streaming/mjpeg/m1/360p
-	echo 640 > streaming/mjpeg/m1/360p/wWidth
-	echo 360 > streaming/mjpeg/m1/360p/wHeight
-	echo 460800   > streaming/mjpeg/m1/360p/dwMaxVideoFrameBufferSize
-	echo 18432000  > streaming/mjpeg/m1/360p/dwMinBitRate
-	echo 55296000 > streaming/mjpeg/m1/360p/dwMaxBitRate
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m1/360p/dwFrameInterval
-	echo 333333 > streaming/mjpeg/m1/360p/dwDefaultFrameInterval
+		mkdir -p streaming/mjpeg/m1/360p
+		echo 640 > streaming/mjpeg/m1/360p/wWidth
+		echo 360 > streaming/mjpeg/m1/360p/wHeight
+		echo 460800   > streaming/mjpeg/m1/360p/dwMaxVideoFrameBufferSize
+		echo 18432000  > streaming/mjpeg/m1/360p/dwMinBitRate
+		echo 55296000 > streaming/mjpeg/m1/360p/dwMaxBitRate
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m1/360p/dwFrameInterval
+		echo 333333 > streaming/mjpeg/m1/360p/dwDefaultFrameInterval
 
-	mkdir -p streaming/mjpeg/m1/720p
-	echo 1280 > streaming/mjpeg/m1/720p/wWidth
-	echo 720 > streaming/mjpeg/m1/720p/wHeight
-	echo 29491200 > streaming/mjpeg/m1/720p/dwMinBitRate
-	echo 29491200 > streaming/mjpeg/m1/720p/dwMaxBitRate
-	echo 1843200 > streaming/mjpeg/m1/720p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/mjpeg/m1/720p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m1/720p/dwFrameInterval
+		mkdir -p streaming/mjpeg/m1/720p
+		echo 1280 > streaming/mjpeg/m1/720p/wWidth
+		echo 720 > streaming/mjpeg/m1/720p/wHeight
+		echo 29491200 > streaming/mjpeg/m1/720p/dwMinBitRate
+		echo 29491200 > streaming/mjpeg/m1/720p/dwMaxBitRate
+		echo 1843200 > streaming/mjpeg/m1/720p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/mjpeg/m1/720p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m1/720p/dwFrameInterval
 
-	mkdir -p streaming/mjpeg/m1/1080p
-	echo 1920 > streaming/mjpeg/m1/1080p/wWidth
-	echo 1080 > streaming/mjpeg/m1/1080p/wHeight
-	echo 66355200 > streaming/mjpeg/m1/1080p/dwMinBitRate
-	echo 995328000 > streaming/mjpeg/m1/1080p/dwMaxBitRate
-	echo 4147200 > streaming/mjpeg/m1/1080p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/mjpeg/m1/1080p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m1/1080p/dwFrameInterval
+		mkdir -p streaming/mjpeg/m1/1080p
+		echo 1920 > streaming/mjpeg/m1/1080p/wWidth
+		echo 1080 > streaming/mjpeg/m1/1080p/wHeight
+		echo 66355200 > streaming/mjpeg/m1/1080p/dwMinBitRate
+		echo 995328000 > streaming/mjpeg/m1/1080p/dwMaxBitRate
+		echo 4147200 > streaming/mjpeg/m1/1080p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/mjpeg/m1/1080p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m1/1080p/dwFrameInterval
 
-	mkdir -p streaming/mjpeg/m/360p
-	echo 640 > streaming/mjpeg/m/360p/wWidth
-	echo 360 > streaming/mjpeg/m/360p/wHeight
-	echo 460800   > streaming/mjpeg/m/360p/dwMaxVideoFrameBufferSize
-	echo 18432000  > streaming/mjpeg/m/360p/dwMinBitRate
-	echo 55296000 > streaming/mjpeg/m/360p/dwMaxBitRate
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/360p/dwFrameInterval
-	echo 333333 > streaming/mjpeg/m/360p/dwDefaultFrameInterval
+		mkdir -p streaming/mjpeg/m/360p
+		echo 640 > streaming/mjpeg/m/360p/wWidth
+		echo 360 > streaming/mjpeg/m/360p/wHeight
+		echo 460800   > streaming/mjpeg/m/360p/dwMaxVideoFrameBufferSize
+		echo 18432000  > streaming/mjpeg/m/360p/dwMinBitRate
+		echo 55296000 > streaming/mjpeg/m/360p/dwMaxBitRate
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/360p/dwFrameInterval
+		echo 333333 > streaming/mjpeg/m/360p/dwDefaultFrameInterval
 
-	mkdir -p streaming/mjpeg/m/720p
-	echo 1280 > streaming/mjpeg/m/720p/wWidth
-	echo 720 > streaming/mjpeg/m/720p/wHeight
-	echo 29491200 > streaming/mjpeg/m/720p/dwMinBitRate
-	echo 29491200 > streaming/mjpeg/m/720p/dwMaxBitRate
-	echo 1843200 > streaming/mjpeg/m/720p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/mjpeg/m/720p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/720p/dwFrameInterval
+		mkdir -p streaming/mjpeg/m/720p
+		echo 1280 > streaming/mjpeg/m/720p/wWidth
+		echo 720 > streaming/mjpeg/m/720p/wHeight
+		echo 29491200 > streaming/mjpeg/m/720p/dwMinBitRate
+		echo 29491200 > streaming/mjpeg/m/720p/dwMaxBitRate
+		echo 1843200 > streaming/mjpeg/m/720p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/mjpeg/m/720p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/720p/dwFrameInterval
 
-	mkdir -p streaming/mjpeg/m/1080p
-	echo 1920 > streaming/mjpeg/m/1080p/wWidth
-	echo 1080 > streaming/mjpeg/m/1080p/wHeight
-	echo 66355200 > streaming/mjpeg/m/1080p/dwMinBitRate
-	echo 995328000 > streaming/mjpeg/m/1080p/dwMaxBitRate
-	echo 4147200 > streaming/mjpeg/m/1080p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/mjpeg/m/1080p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/1080p/dwFrameInterval
+		mkdir -p streaming/mjpeg/m/1080p
+		echo 1920 > streaming/mjpeg/m/1080p/wWidth
+		echo 1080 > streaming/mjpeg/m/1080p/wHeight
+		echo 66355200 > streaming/mjpeg/m/1080p/dwMinBitRate
+		echo 995328000 > streaming/mjpeg/m/1080p/dwMaxBitRate
+		echo 4147200 > streaming/mjpeg/m/1080p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/mjpeg/m/1080p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/1080p/dwFrameInterval
 
-	mkdir -p streaming/mjpeg/m/1440p
-	echo 2560 > streaming/mjpeg/m/1440p/wWidth
-	echo 1440 > streaming/mjpeg/m/1440p/wHeight
-	echo 117964800 > streaming/mjpeg/m/1440p/dwMinBitRate
-	echo 1769472000 > streaming/mjpeg/m/1440p/dwMaxBitRate
-	echo 7372800 > streaming/mjpeg/m/1440p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/mjpeg/m/1440p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/1440p/dwFrameInterval
+		mkdir -p streaming/mjpeg/m/1440p
+		echo 2560 > streaming/mjpeg/m/1440p/wWidth
+		echo 1440 > streaming/mjpeg/m/1440p/wHeight
+		echo 117964800 > streaming/mjpeg/m/1440p/dwMinBitRate
+		echo 1769472000 > streaming/mjpeg/m/1440p/dwMaxBitRate
+		echo 7372800 > streaming/mjpeg/m/1440p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/mjpeg/m/1440p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/1440p/dwFrameInterval
 
-	mkdir -p streaming/mjpeg/m/2160p
-	echo 3840 > streaming/mjpeg/m/2160p/wWidth
-	echo 2160 > streaming/mjpeg/m/2160p/wHeight
-	echo 265420800 > streaming/mjpeg/m/2160p/dwMinBitRate
-	echo 3981312000 > streaming/mjpeg/m/2160p/dwMaxBitRate
-	echo 16588800 > streaming/mjpeg/m/2160p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/mjpeg/m/2160p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/2160p/dwFrameInterval
+		mkdir -p streaming/mjpeg/m/2160p
+		echo 3840 > streaming/mjpeg/m/2160p/wWidth
+		echo 2160 > streaming/mjpeg/m/2160p/wHeight
+		echo 265420800 > streaming/mjpeg/m/2160p/dwMinBitRate
+		echo 3981312000 > streaming/mjpeg/m/2160p/dwMaxBitRate
+		echo 16588800 > streaming/mjpeg/m/2160p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/mjpeg/m/2160p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/mjpeg/m/2160p/dwFrameInterval
 
-	echo 0x04 > /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/bmaControls
-	echo 0x04 > /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m1/bmaControls
+		echo 0x04 > /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/bmaControls
+		echo 0x04 > /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m1/bmaControls
 
-	mkdir -p streaming/h264/h/360p
-	echo 640 > streaming/h264/h/360p/wWidth
-	echo 360 > streaming/h264/h/360p/wHeight
-	echo 12288000 > streaming/h264/h/360p/dwMinBitRate
-	echo 36864000 > streaming/h264/h/360p/dwMaxBitRate
-	echo 333333 > streaming/h264/h/360p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/360p/dwFrameInterval
+		mkdir -p streaming/h264/h/360p
+		echo 640 > streaming/h264/h/360p/wWidth
+		echo 360 > streaming/h264/h/360p/wHeight
+		echo 12288000 > streaming/h264/h/360p/dwMinBitRate
+		echo 36864000 > streaming/h264/h/360p/dwMaxBitRate
+		echo 333333 > streaming/h264/h/360p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/360p/dwFrameInterval
 
-	mkdir -p streaming/h264/h/720p
-	echo 1280 > streaming/h264/h/720p/wWidth
-	echo 720 > streaming/h264/h/720p/wHeight
-	echo 49152000 > streaming/h264/h/720p/dwMinBitRate
-	echo 147456000 > streaming/h264/h/720p/dwMaxBitRate
-	echo 333333 > streaming/h264/h/720p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/720p/dwFrameInterval
+		mkdir -p streaming/h264/h/720p
+		echo 1280 > streaming/h264/h/720p/wWidth
+		echo 720 > streaming/h264/h/720p/wHeight
+		echo 49152000 > streaming/h264/h/720p/dwMinBitRate
+		echo 147456000 > streaming/h264/h/720p/dwMaxBitRate
+		echo 333333 > streaming/h264/h/720p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/720p/dwFrameInterval
 
-	mkdir -p streaming/h264/h/1080p
-	echo 1920 > streaming/h264/h/1080p/wWidth
-	echo 1080 > streaming/h264/h/1080p/wHeight
-	echo 110592000 > streaming/h264/h/1080p/dwMinBitRate
-	echo 331776000 > streaming/h264/h/1080p/dwMaxBitRate
-	echo 333333 > streaming/h264/h/1080p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/1080p/dwFrameInterval
+		mkdir -p streaming/h264/h/1080p
+		echo 1920 > streaming/h264/h/1080p/wWidth
+		echo 1080 > streaming/h264/h/1080p/wHeight
+		echo 110592000 > streaming/h264/h/1080p/dwMinBitRate
+		echo 331776000 > streaming/h264/h/1080p/dwMaxBitRate
+		echo 333333 > streaming/h264/h/1080p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/1080p/dwFrameInterval
 
-	mkdir -p streaming/h264/h/2160p
-	echo 3840 > streaming/h264/h/2160p/wWidth
-	echo 2160 > streaming/h264/h/2160p/wHeight
-	echo 265420800 > streaming/h264/h/2160p/dwMinBitRate
-	echo 3981312000 > streaming/h264/h/2160p/dwMaxBitRate
-	echo 16588800 > streaming/h264/h/2160p/dwMaxVideoFrameBufferSize
-	echo 333333 > streaming/h264/h/2160p/dwDefaultFrameInterval
-	echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/2160p/dwFrameInterval
+		mkdir -p streaming/h264/h/2160p
+		echo 3840 > streaming/h264/h/2160p/wWidth
+		echo 2160 > streaming/h264/h/2160p/wHeight
+		echo 265420800 > streaming/h264/h/2160p/dwMinBitRate
+		echo 3981312000 > streaming/h264/h/2160p/dwMaxBitRate
+		echo 16588800 > streaming/h264/h/2160p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/h264/h/2160p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/2160p/dwFrameInterval
 
-	mkdir streaming/header/h
-	mkdir streaming/header/h1
-	ln -s streaming/uncompressed/u1 streaming/header/h1
-	ln -s streaming/mjpeg/m1 streaming/header/h1
-	ln -s streaming/h264/h streaming/header/h1
-	ln -s streaming/uncompressed/u streaming/header/h
-	ln -s streaming/mjpeg/m streaming/header/h
-	ln -s streaming/h264/h streaming/header/h
-	ln -s streaming/header/h1 streaming/class/fs/
-	ln -s streaming/header/h1 streaming/class/hs/
-	ln -s streaming/header/h streaming/class/ss/
-fi
+		mkdir streaming/header/h
+		mkdir streaming/header/h1
+		ln -s streaming/uncompressed/u1 streaming/header/h1
+		ln -s streaming/mjpeg/m1 streaming/header/h1
+		ln -s streaming/h264/h streaming/header/h1
+		ln -s streaming/uncompressed/u streaming/header/h
+		ln -s streaming/mjpeg/m streaming/header/h
+		ln -s streaming/h264/h streaming/header/h
+		ln -s streaming/header/h1 streaming/class/fs/
+		ln -s streaming/header/h1 streaming/class/hs/
+		ln -s streaming/header/h streaming/class/ss/
+	fi
+done
 
 #
 # Initialize multi uvc conifguration.
 #
-for i in 1 2 3 4 5 6 7 8 9
+for i in 2 3 4 5 6 7 8 9
 do
 	if [ -d /config/usb_gadget/g1/functions/uvc.$i ]; then
 		cd /config/usb_gadget/g1/functions/uvc.$i
