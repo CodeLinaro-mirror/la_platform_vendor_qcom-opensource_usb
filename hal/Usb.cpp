@@ -711,8 +711,8 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
       std::csub_match intfpath = match[2];
       checkUsbInterfaceAutoSuspend("/sys" + devpath.str(), intfpath.str());
     }
-  } else if (std::regex_match(msg, match, udc_regex)) {
-    if (!strncmp(msg, "add", 3) && (strstr(msg, gadgetName.c_str()))) {
+  } else if (std::regex_match(msg, match, udc_regex) && (strstr(msg, gadgetName.c_str()))) {
+    if (!strncmp(msg, "add", 3)) {
       // Allow ADBD to resume its FFS monitor thread
       SetProperty(VENDOR_USB_ADB_DISABLED_PROP, "0");
 
