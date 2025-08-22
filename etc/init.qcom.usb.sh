@@ -56,7 +56,12 @@ if [ "$(getprop ro.build.type)" != "user" ]; then
     if [ "$esoc_name" != "" ]; then
 	  setprop persist.vendor.usb.config diag,diag_mdm,qdss,qdss_mdm,serial_cdev,dpl,rmnet,adb
     else
-	  case "$(getprop ro.baseband)" in
+      case "$soc_id" in
+          "721")
+              setprop persist.vendor.usb.config diag,adb
+          ;;
+          *)
+	      case "$(getprop ro.baseband)" in
 	      "apq")
 		if [ "$target" == "gen5" ]; then
 			setprop persist.vendor.usb.config adb
@@ -126,6 +131,8 @@ if [ "$(getprop ro.build.type)" != "user" ]; then
 	      esac
 	      ;;
 	  esac
+	  ;;
+      esac
       fi
   fi
 else # for user build let persist.sys.usb.config dictate the default composition
