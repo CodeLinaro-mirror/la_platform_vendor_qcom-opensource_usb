@@ -187,6 +187,13 @@ on zygote-start
     write /config/usb_gadget/g1/strings/0x409/product ${vendor.usb.product_string}
     write /config/usb_gadget/g2/strings/0x409/product ${vendor.usb.product_string}
 
+    #
+    # Rename NCM interface to ncm0 to avoid using the default name usb0.
+    # This would avoid ethernet code claiming this interface and thus creating
+    # conflict with the tethering path.
+    #
+    write /config/usb_gadget/g1/functions/ncm.gs6/ifname "ncm%d"
+
 on zygote-start && property:vendor.usb.use_ffs_mtp=1
    mkdir /config/usb_gadget/g1/functions/ffs.mtp 0770 system usb
    mkdir /config/usb_gadget/g1/functions/ffs.ptp 0770 system usb
