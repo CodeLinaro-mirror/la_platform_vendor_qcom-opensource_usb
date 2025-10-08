@@ -37,7 +37,11 @@ ifneq ($(TARGET_KERNEL_VERSION),$(filter $(TARGET_KERNEL_VERSION),4.9 4.14))
   PRODUCT_PACKAGES += android.hardware.usb-service.qti
 endif
 
-PRODUCT_VENDOR_PROPERTIES += ro.usb.uvc.enabled=true
+ifneq ($(filter parrot lahaina,$(TARGET_BOARD_PLATFORM)),)
+  # UVC is not enabled for parrot and lahaina platforms
+else
+  PRODUCT_VENDOR_PROPERTIES += ro.usb.uvc.enabled=true
+endif
 
 USB_USES_QMAA = $(TARGET_USES_QMAA)
 ifeq ($(TARGET_USES_QMAA_OVERRIDE_USB),true)
