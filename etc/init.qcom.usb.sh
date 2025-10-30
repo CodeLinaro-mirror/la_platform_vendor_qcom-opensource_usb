@@ -345,14 +345,52 @@ do
 		echo 333333 > streaming/h264/h/2160p/dwDefaultFrameInterval
 		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/2160p/dwFrameInterval
 
+		mkdir -p streaming/framebased/h/360p
+		echo 640 > streaming/framebased/h/360p/wWidth
+		echo 360 > streaming/framebased/h/360p/wHeight
+		echo 12288000 > streaming/framebased/h/360p/dwMinBitRate
+		echo 36864000 > streaming/framebased/h/360p/dwMaxBitRate
+		echo 4147200 > streaming/framebased/h/360p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/framebased/h/360p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/framebased/h/360p/dwFrameInterval
+
+		mkdir -p streaming/framebased/h/720p
+		echo 1280 > streaming/framebased/h/720p/wWidth
+		echo 720 > streaming/framebased/h/720p/wHeight
+		echo 49152000 > streaming/framebased/h/720p/dwMinBitRate
+		echo 147456000 > streaming/framebased/h/720p/dwMaxBitRate
+		echo 4147200 > streaming/framebased/h/720p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/framebased/h/720p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/framebased/h/720p/dwFrameInterval
+
+		mkdir -p streaming/framebased/h/1080p
+		echo 1920 > streaming/framebased/h/1080p/wWidth
+		echo 1080 > streaming/framebased/h/1080p/wHeight
+		echo 110592000 > streaming/framebased/h/1080p/dwMinBitRate
+		echo 331776000 > streaming/framebased/h/1080p/dwMaxBitRate
+		echo 4147200 > streaming/framebased/h/1080p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/framebased/h/1080p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/framebased/h/1080p/dwFrameInterval
+
+		mkdir -p streaming/framebased/h/2160p
+		echo 3840 > streaming/framebased/h/2160p/wWidth
+		echo 2160 > streaming/framebased/h/2160p/wHeight
+		echo 265420800 > streaming/framebased/h/2160p/dwMinBitRate
+		echo 3981312000 > streaming/framebased/h/2160p/dwMaxBitRate
+		echo 16588800 > streaming/framebased/h/2160p/dwMaxVideoFrameBufferSize
+		echo 333333 > streaming/framebased/h/2160p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/framebased/h/2160p/dwFrameInterval
+
 		mkdir streaming/header/h
 		mkdir streaming/header/h1
 		ln -s streaming/uncompressed/u1 streaming/header/h1
 		ln -s streaming/mjpeg/m1 streaming/header/h1
 		ln -s streaming/h264/h streaming/header/h1
+		ln -s streaming/framebased/h streaming/header/h1
 		ln -s streaming/uncompressed/u streaming/header/h
 		ln -s streaming/mjpeg/m streaming/header/h
 		ln -s streaming/h264/h streaming/header/h
+		ln -s streaming/framebased/h streaming/header/h
 		ln -s streaming/header/h1 streaming/class/fs/
 		ln -s streaming/header/h1 streaming/class/hs/
 		ln -s streaming/header/h streaming/class/ss/
