@@ -438,11 +438,11 @@ do
 		ln -s streaming/h264/h streaming/header/h1
 		ln -s streaming/framebased/h streaming/header/h1
 		ln -s streaming/uncompressed/u streaming/header/h
-		ln -s streaming/uncompressed/u2 streaming/header/h
-		ln -s streaming/uncompressed/u3 streaming/header/h
 		ln -s streaming/mjpeg/m streaming/header/h
 		ln -s streaming/h264/h streaming/header/h
 		ln -s streaming/framebased/h streaming/header/h
+		ln -s streaming/uncompressed/u2 streaming/header/h
+		ln -s streaming/uncompressed/u3 streaming/header/h
 		ln -s streaming/header/h1 streaming/class/fs/
 		ln -s streaming/header/h1 streaming/class/hs/
 		ln -s streaming/header/h streaming/class/ss/
