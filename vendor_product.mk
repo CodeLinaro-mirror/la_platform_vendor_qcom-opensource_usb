@@ -13,6 +13,11 @@ else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=a600000.dwc3
 endif
 
+# NCM uses HW path on these targets
+ifneq ($(filter seraph,$(TARGET_BOARD_PLATFORM)),)
+PRODUCT_PROPERTY_OVERRIDES += vendor.usb.ncm.func.name=gsi
+endif
+
 # QDSS uses SW path on these targets
 ifneq ($(filter seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss_sw
