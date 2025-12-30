@@ -19,7 +19,7 @@ PRODUCT_PROPERTY_OVERRIDES += vendor.usb.ncm.func.name=gsi
 endif
 
 # QDSS uses SW path on these targets
-ifneq ($(filter seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna chora bengal,$(TARGET_BOARD_PLATFORM)),)
+ifneq ($(filter seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna chora bengal malabar,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss_sw
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss
