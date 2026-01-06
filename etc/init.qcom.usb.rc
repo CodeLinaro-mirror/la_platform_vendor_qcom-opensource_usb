@@ -99,6 +99,7 @@ on zygote-start
     mkdir /config/usb_gadget/g1/functions/gsi.rmnet 0770 system usb
     mkdir /config/usb_gadget/g1/functions/gsi.rndis 0770 system usb
     mkdir /config/usb_gadget/g1/functions/gsi.dpl 0770 system usb
+    mkdir /config/usb_gadget/g1/functions/gsi.ncm 0770 system usb
     mkdir /config/usb_gadget/g1/functions/qdss.qdss 0770 system usb
     mkdir /config/usb_gadget/g1/functions/qdss.qdss_mdm 0770 system usb
     mkdir /config/usb_gadget/g1/functions/qdss.qdss_sw 0770 system usb
