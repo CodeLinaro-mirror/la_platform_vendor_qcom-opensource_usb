@@ -1878,21 +1878,22 @@ on property:vendor.usb.uvc.function.init=1
     write /config/usb_gadget/g1/functions/uvc.0/streaming/uncompressed/u/720p/dwFrameInterval "5000000"
     mkdir /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m
     mkdir /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/360p
-    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/360p/dwFrameInterval "5000000"
+    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/360p/dwDefaultFrameInterval 333333
+    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/360p/dwFrameInterval 166666\n333333\n666666\n1000000\n5000000\n
     mkdir /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/wWidth 1280
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/wHeight 720
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwMinBitRate 29491200
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwMaxBitRate 29491200
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwMaxVideoFrameBufferSize 1843200
-    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwDefaultFrameInterval 5000000
-    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwFrameInterval "5000000"
+    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwDefaultFrameInterval 333333
+    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/720p/dwFrameInterval 166666\n333333\n666666\n1000000\n5000000\n
     mkdir /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p/wHeight 1080
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p/wWidth 1920
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p/dwMaxVideoFrameBufferSize 4147200
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p/dwDefaultFrameInterval 333333
-    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p/dwFrameInterval "333333"
+    write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/1080p/dwFrameInterval 166666\n333333\n666666\n1000000\n5000000\n
     write /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m/bmaControls 0x04
     mkdir /config/usb_gadget/g1/functions/uvc.0/streaming/h264/h
     mkdir /config/usb_gadget/g1/functions/uvc.0/streaming/h264/h/960p
