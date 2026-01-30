@@ -45,6 +45,9 @@ using ::android::hardware::Void;
 using ::android::base::SetProperty;
 using ::android::base::GetProperty;
 using ::android::sp;
+using ::android::base::Trim;
+using ::android::base::ReadFileToString;
+using ::android::base::WriteStringToFile;
 
 struct Usb : public IUsb {
     Usb();
