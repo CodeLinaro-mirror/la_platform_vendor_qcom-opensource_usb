@@ -14,12 +14,12 @@ else
 endif
 
 # NCM uses HW path on these targets
-ifneq ($(filter seraph,$(TARGET_BOARD_PLATFORM)),)
+ifneq ($(filter pikachu seraph,$(TARGET_BOARD_PLATFORM)),)
 PRODUCT_PROPERTY_OVERRIDES += vendor.usb.ncm.func.name=gsi
 endif
 
 # QDSS uses SW path on these targets
-ifneq ($(filter seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna chora bengal malabar shikra,$(TARGET_BOARD_PLATFORM)),)
+ifneq ($(filter pikachu seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna chora bengal malabar shikra,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss_sw
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss
