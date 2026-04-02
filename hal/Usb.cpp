@@ -147,7 +147,7 @@ ScopedAStatus Usb::enableUsbData(const std::string& in_portName, bool in_enable,
   ALOGI("enableUsbData in_enable: %d", in_enable);
   getUsbControllerPath(dwcDriver);
   if (dwcDriver == "") {
-    ALOGE("resetUsbPort unable to find dwc device");
+    ALOGE("enableUsbData unable to find dwc device");
     status = Status::ERROR;
     goto out;
   }
