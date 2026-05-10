@@ -58,7 +58,7 @@ if [ "$(getprop ro.build.type)" != "user" ]; then
     else
 	  case "$(getprop ro.baseband)" in
 	      "apq")
-		if [ "$target" == "seraph" ]; then
+		if [ "$target" == "seraph" ] || [ "$target" == "pikachu" ]; then
 			setprop persist.vendor.usb.config diag,qdss,adb
 		else
 			setprop persist.vendor.usb.config diag,adb
@@ -113,7 +113,7 @@ if [ "$(getprop ro.build.type)" != "user" ]; then
 				  "taro" | "kalama" | "pineapple" | "sun" | "canoe")
 			  setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb
 		      ;;
-		      "vienna" | "monaco" | "chora")
+		      "vienna" | "monaco" | "chora" | "malabar")
 			  setprop persist.vendor.usb.config diag,qdss,rmnet,adb
 		      ;;
 	              *)
