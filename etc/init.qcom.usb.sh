@@ -113,8 +113,18 @@ if [ "$(getprop ro.build.type)" != "user" ]; then
 				  "taro" | "kalama" | "pineapple" | "sun" | "canoe")
 			  setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb
 		      ;;
-		      "vienna" | "monaco" | "chora" | "malabar" | "shikra")
+		      "vienna" | "monaco" | "malabar" | "shikra")
 			  setprop persist.vendor.usb.config diag,qdss,rmnet,adb
+		      ;;
+		      "chora")
+		           case "$soc_id" in
+			           "568" | "776")
+			              setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb
+			           ;;
+			           *)
+				      setprop persist.vendor.usb.config diag,qdss,rmnet,adb
+			           ;;
+		               esac
 		      ;;
 	              *)
 		          setprop persist.vendor.usb.config diag,adb
