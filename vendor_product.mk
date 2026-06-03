@@ -2,15 +2,16 @@
 # Default property overrides for various function configurations
 # These can be further overridden at runtime in init*.rc files as needed
 #
-PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rndis.func.name=gsi
 PRODUCT_PROPERTY_OVERRIDES += vendor.usb.dpl.inst.name=dpl
 
 # A2 BAM DEMUX  path on these targets
 ifneq ($(filter shikra,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.func.name=rmnet_bam
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.inst.name=rmnet_bam_dmux
+  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rndis.func.name=rndis
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.func.name=gsi
+  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rndis.func.name=gsi
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.inst.name=rmnet
 endif
 
