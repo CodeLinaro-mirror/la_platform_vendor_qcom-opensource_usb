@@ -210,6 +210,7 @@ on boot
     setprop sys.usb.config ${persist.vendor.usb.config}
 
 on boot && property:vendor.usb.use_gadget_hal=1
+   setprop sys.usb.controller ${vendor.usb.controller}
    setprop sys.usb.configfs 2
 
 on property:sys.usb.config=* && property:sys.usb.configfs=2
