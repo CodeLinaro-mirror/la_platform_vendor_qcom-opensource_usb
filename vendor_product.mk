@@ -2,15 +2,16 @@
 # Default property overrides for various function configurations
 # These can be further overridden at runtime in init*.rc files as needed
 #
-PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rndis.func.name=gsi
 PRODUCT_PROPERTY_OVERRIDES += vendor.usb.dpl.inst.name=dpl
 
 # A2 BAM DEMUX  path on these targets
 ifneq ($(filter shikra,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.func.name=rmnet_bam
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.inst.name=rmnet_bam_dmux
+  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rndis.func.name=rndis
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.func.name=gsi
+  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rndis.func.name=gsi
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.inst.name=rmnet
 endif
 
@@ -66,7 +67,7 @@ else
   # USB Gadget HAL is enabled on newer targets and takes the place
   # of the init-based configfs rules for setting USB compositions
   #
-  ifneq ($(filter pikachu seraph taro kalama pineapple sun canoe monaco vienna lahaina chora bengal malabar shikra,$(TARGET_BOARD_PLATFORM)),)
+  ifneq ($(filter pikachu seraph taro kalama pineapple sun canoe monaco vienna lahaina chora bengal malabar shikra hamoa,$(TARGET_BOARD_PLATFORM)),)
     PRODUCT_PROPERTY_OVERRIDES += vendor.usb.use_gadget_hal=1
     PRODUCT_PACKAGES += android.hardware.usb.gadget-service.qti
     PRODUCT_PACKAGES += usb_compositions.conf
