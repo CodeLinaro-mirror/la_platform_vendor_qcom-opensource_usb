@@ -188,6 +188,25 @@ static std::map<std::string, std::function<std::string()> > supported_funcs {
 };
 
 int UsbGadget::addFunctionsFromPropString(std::string prop, bool &ffsEnabled, int &i) {
+  // Generic fallback: If the requested composition (e.g., "uac2,adb") is not defined in
+  // supported_compositions, try stripping ",adb". If the base composition (e.g., "uac2")
+  // is valid, use it. This forces single composition and avoids starting adbd.
+  if (!supported_compositions.count(prop)) {
+      const std::string adb_suffix = ",adb";
+      if (prop.length() > adb_suffix.length() &&
+          prop.compare(prop.length() - adb_suffix.length(), adb_suffix.length(), adb_suffix) == 0) {
+
+          std::string base_prop = prop.substr(0, prop.length() - adb_suffix.length());
+
+          // Check if the stripped version (e.g., "uac2", "uvc", "hid") is supported
+          if (supported_compositions.count(base_prop)) {
+             ALOGI("Composition \"%s\" unsupported. Fallback to \"%s\" (stripping ADB)",
+                   prop.c_str(), base_prop.c_str());
+             prop = base_prop;
+          }
+      }
+  }
+
   if (!supported_compositions.count(prop)) {
     ALOGE("Composition \"%s\" unsupported", prop.c_str());
     return -1;
