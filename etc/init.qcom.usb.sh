@@ -157,7 +157,21 @@ esac
 
 # check configfs is mounted or not
 if [ -d /config/usb_gadget ]; then
-	machine_type=`cat /sys/devices/soc0/machine`
+	msm_family=`cat /sys/devices/soc0/chip_family`;
+	msm_family_hex=""
+	if [ "$msm_family" != "" ] && [ "$msm_family" -eq "$msm_family" ]; then
+		msm_family_hex=`printf _F:%02X $msm_family`
+	fi
+
+	msm_device=`cat /sys/devices/soc0/raw_device_number`;
+	msm_device_hex=""
+	if [ "$msm_device" != "" ] && [ "$msm_device" -eq "$msm_device" ]; then
+		msm_device_hex=`printf _D:%04X $msm_device`
+	fi
+
+	msm_version=`cat /sys/devices/soc0/revision`;
+	msm_version_str=""
+	[ -n "$msm_version" ] && msm_version_str="_V:$msm_version"
 
 	# Chip ID & serial are used for unique MSM identification in Product String
 	# If not present, then omit them instead of using 0x00000000
@@ -171,7 +185,7 @@ if [ -d /config/usb_gadget ]; then
 		msm_serial_hex=`printf _SN:%08X $msm_serial`
 	fi
 
-	setprop vendor.usb.product_string "$machine_type-$soc_hwplatform$msm_chipid_hex$msm_serial_hex"
+	setprop vendor.usb.product_string "QUSB$msm_family_hex$msm_device_hex$msm_version_str$msm_chipid_hex$msm_serial_hex"
 
 	# ADB requires valid iSerialNumber; if ro.serialno is missing, use dummy
 	serialnumber=`cat /config/usb_gadget/g1/strings/0x409/serialnumber 2> /dev/null`
