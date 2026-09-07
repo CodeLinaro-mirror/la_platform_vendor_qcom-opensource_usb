@@ -17,10 +17,18 @@ PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.inst.name=rmnet
 PRODUCT_PROPERTY_OVERRIDES += vendor.usb.dpl.inst.name=dpl
 
 ifneq ($(filter blair monaco pitti,$(TARGET_BOARD_PLATFORM)),)
-  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=4e00000.dwc3
+  USB_CONTROLLER_DEFAULT := 4e00000.dwc3
 else
-  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=a600000.dwc3
+  USB_CONTROLLER_DEFAULT := a600000.dwc3
 endif
+
+# AXR configuration overrides platform-specific USB controller settings
+# WARNING: This must remain after the platform-specific block above to take effect.
+ifeq ($(TARGET_DEFINES_AXR_CONFIGURATION),true)
+  USB_CONTROLLER_DEFAULT := a400000.dwc3
+endif
+
+PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=$(USB_CONTROLLER_DEFAULT)
 
 # QDSS uses SW path on these targets
 ifneq ($(filter seraph lahaina taro blair kalama pineapple monaco pitti niobe volcano anorak61 neo61,$(TARGET_BOARD_PLATFORM)),)
