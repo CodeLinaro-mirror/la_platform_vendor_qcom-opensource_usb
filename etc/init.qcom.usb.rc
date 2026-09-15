@@ -2073,6 +2073,6 @@ on property:vendor.usb.uvc.function.init=1
     symlink /config/usb_gadget/g1/functions/uvc.0/streaming/uncompressed/u /config/usb_gadget/g1/functions/uvc.0/streaming/header/h/u
     symlink /config/usb_gadget/g1/functions/uvc.0/streaming/mjpeg/m /config/usb_gadget/g1/functions/uvc.0/streaming/header/h/m
     symlink /config/usb_gadget/g1/functions/uvc.0/streaming/framebased/h /config/usb_gadget/g1/functions/uvc.0/streaming/header/h/h
-    symlink /config/usb_gadget/g1/functions/uvc.0/streaming/header/h1 /config/usb_gadget/g1/functions/uvc.0/streaming/class/fs/h1
-    symlink /config/usb_gadget/g1/functions/uvc.0/streaming/header/h1 /config/usb_gadget/g1/functions/uvc.0/streaming/class/hs/h1
+    symlink /config/usb_gadget/g1/functions/uvc.0/streaming/header/h /config/usb_gadget/g1/functions/uvc.0/streaming/class/fs/h
+    symlink /config/usb_gadget/g1/functions/uvc.0/streaming/header/h /config/usb_gadget/g1/functions/uvc.0/streaming/class/hs/h
     symlink /config/usb_gadget/g1/functions/uvc.0/streaming/header/h /config/usb_gadget/g1/functions/uvc.0/streaming/class/ss/h
