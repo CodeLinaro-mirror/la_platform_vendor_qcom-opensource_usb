@@ -54,6 +54,7 @@
 #define USB_CONTROLLER_PROP "vendor.usb.controller"
 #define USB_MODE_PATH "/sys/bus/platform/devices/"
 #define USB_UDC_PATH "/sys/class/udc"
+#define ROOT_HUB_AUTOSUSPEND_DELAY_PROP "vendor.usb.roothub.autosuspend_delay_ms"
 
 namespace aidl {
 namespace android {
@@ -72,6 +73,7 @@ const char GOOGLE_USBC_35_ADAPTER_UNPLUGGED_ID_STR[] = "5029";
 static bool checkUsbWakeupSupport();
 static void checkUsbInHostMode();
 static void checkUsbDeviceAutoSuspend(const std::string &devicePath);
+static void checkRootHubAutoSuspend(const std::string &rootHubPath);
 static bool checkUsbInterfaceAutoSuspend(const std::string &devicePath,
                                          const std::string &intf);
 
@@ -720,8 +722,8 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
 
   std::string gadgetName = GetProperty(USB_CONTROLLER_PROP, "");
   static std::regex add_regex(
-      "add@(/devices/platform/soc/.*dwc3/xhci-hcd\\.\\d\\.auto/"
-      "usb\\d/\\d-\\d(?:/[\\d\\.-]+)*)");
+      "add@((/devices/platform/soc/.*dwc3/xhci-hcd\\.\\d\\.auto/"
+      "usb\\d)/\\d-\\d(?:/[\\d\\.-]+)*)");
   static std::regex remove_regex(
       "remove@((/devices/platform/soc/.*dwc3/xhci-hcd\\.\\d\\.auto/"
       "usb\\d)/\\d-\\d(?:/[\\d\\.-]+)*)");
@@ -751,9 +753,11 @@ static void uevent_event(const unique_fd &uevent_fd, struct Usb *usb) {
   } else if (strstr(msg, "power_supply/usb")) {
     handle_psy_uevent(usb, msg + strlen(msg) + 1);
   } else if (std::regex_match(msg, match, add_regex)) {
-    if (match.size() == 2) {
+    if (match.size() == 3) {
       std::csub_match submatch = match[1];
+      std::csub_match roothubpath = match[2];
       checkUsbDeviceAutoSuspend("/sys" + submatch.str());
+      checkRootHubAutoSuspend("/sys" + roothubpath.str());
     }
   } else if (!usb->mIgnoreWakeup && std::regex_match(msg, match, bind_regex)) {
     if (match.size() == 3) {
@@ -1116,6 +1120,16 @@ static void checkUsbDeviceAutoSuspend(const std::string &devicePath) {
     WriteStringToFile("auto", devicePath + "/power/control");
     WriteStringToFile("enabled", devicePath + "/power/wakeup");
   }
+}
+
+/*
+ * Sets the autosuspend delay on a USB root hub device.
+ */
+static void checkRootHubAutoSuspend(const std::string &rootHubPath) {
+  std::string delayMs = GetProperty(ROOT_HUB_AUTOSUSPEND_DELAY_PROP, "1000");
+
+  ALOGI("auto suspend usb root hub %s", rootHubPath.c_str());
+  WriteStringToFile(delayMs, rootHubPath + "/power/autosuspend_delay_ms");
 }
 
 static bool checkUsbInterfaceAutoSuspend(const std::string &devicePath,
