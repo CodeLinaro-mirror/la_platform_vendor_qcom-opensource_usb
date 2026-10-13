@@ -424,6 +424,14 @@ do
 		echo 333333 > streaming/h264/h/360p/dwDefaultFrameInterval
 		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/360p/dwFrameInterval
 
+		mkdir -p streaming/h264/h/480p
+		echo 640 > streaming/h264/h/480p/wWidth
+		echo 480 > streaming/h264/h/480p/wHeight
+		echo 16384000 > streaming/h264/h/480p/dwMinBitRate
+		echo 49152000 > streaming/h264/h/480p/dwMaxBitRate
+		echo 333333 > streaming/h264/h/480p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/480p/dwFrameInterval
+
 		mkdir -p streaming/h264/h/720p
 		echo 1280 > streaming/h264/h/720p/wWidth
 		echo 720 > streaming/h264/h/720p/wHeight
@@ -432,6 +440,14 @@ do
 		echo 333333 > streaming/h264/h/720p/dwDefaultFrameInterval
 		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/720p/dwFrameInterval
 
+		mkdir -p streaming/h264/h/992p
+		echo 1280 > streaming/h264/h/992p/wWidth
+		echo 992 > streaming/h264/h/992p/wHeight
+		echo 67720533 > streaming/h264/h/992p/dwMinBitRate
+		echo 203161600 > streaming/h264/h/992p/dwMaxBitRate
+		echo 333333 > streaming/h264/h/992p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/992p/dwFrameInterval
+
 		mkdir -p streaming/h264/h/1080p
 		echo 1920 > streaming/h264/h/1080p/wWidth
 		echo 1080 > streaming/h264/h/1080p/wHeight
@@ -439,6 +455,14 @@ do
 		echo 331776000 > streaming/h264/h/1080p/dwMaxBitRate
 		echo 333333 > streaming/h264/h/1080p/dwDefaultFrameInterval
 		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/1080p/dwFrameInterval
+
+		mkdir -p streaming/h264/h/1984p
+		echo 2560 > streaming/h264/h/1984p/wWidth
+		echo 1984 > streaming/h264/h/1984p/wHeight
+		echo 270882133 > streaming/h264/h/1984p/dwMinBitRate
+		echo 812646400 > streaming/h264/h/1984p/dwMaxBitRate
+		echo 333333 > streaming/h264/h/1984p/dwDefaultFrameInterval
+		echo -e "166666\n333333\n666666\n1000000\n5000000\n" > streaming/h264/h/1984p/dwFrameInterval
 
 		mkdir -p streaming/h264/h/2160p
 		echo 3840 > streaming/h264/h/2160p/wWidth
@@ -519,15 +543,15 @@ do
 		ln -s streaming/mjpeg/m1 streaming/header/h1
 		ln -s streaming/h264/h streaming/header/h1
 		ln -s streaming/framebased/h streaming/header/h1
-		ln -s streaming/uncompressed/u streaming/header/h
-		ln -s streaming/mjpeg/m streaming/header/h
-		ln -s streaming/h264/h streaming/header/h
-		ln -s streaming/framebased/h streaming/header/h
+		ln -s streaming/uncompressed/u streaming/header/h/u
+		ln -s streaming/mjpeg/m streaming/header/h/m
+		ln -s streaming/framebased/h streaming/header/h/h
+		ln -s streaming/h264/h streaming/header/h/h264
 		ln -s streaming/uncompressed/u2 streaming/header/h
 		ln -s streaming/uncompressed/u3 streaming/header/h
-		ln -s streaming/header/h1 streaming/class/fs/
-		ln -s streaming/header/h1 streaming/class/hs/
-		ln -s streaming/header/h streaming/class/ss/
+		ln -s streaming/header/h streaming/class/fs/h
+		ln -s streaming/header/h streaming/class/hs/h
+		ln -s streaming/header/h streaming/class/ss/h
 	fi
 done
 
