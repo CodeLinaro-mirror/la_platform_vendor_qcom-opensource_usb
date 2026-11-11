@@ -30,6 +30,12 @@ endif
 
 PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=$(USB_CONTROLLER_DEFAULT)
 
+# Root hub autosuspend delay is only overridden for AXR configuration;
+# other targets use the HAL's default value.
+ifeq ($(TARGET_DEFINES_AXR_CONFIGURATION),true)
+  PRODUCT_PROPERTY_OVERRIDES += vendor.usb.roothub.autosuspend_delay_ms=6000
+endif
+
 # QDSS uses SW path on these targets
 ifneq ($(filter seraph lahaina taro blair kalama pineapple monaco pitti niobe volcano anorak61 neo61,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss_sw
