@@ -15,7 +15,7 @@ else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.rmnet.inst.name=rmnet
 endif
 
-ifneq ($(filter blair monaco bengal malabar shikra,$(TARGET_BOARD_PLATFORM)),)
+ifneq ($(filter blair monaco bengal malabar shikra sa2390,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=4e00000.dwc3
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.controller=a600000.dwc3
@@ -27,7 +27,7 @@ PRODUCT_PROPERTY_OVERRIDES += vendor.usb.ncm.func.name=gsi
 endif
 
 # QDSS uses SW path on these targets
-ifneq ($(filter pikachu seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna chora bengal malabar shikra,$(TARGET_BOARD_PLATFORM)),)
+ifneq ($(filter pikachu seraph lahaina taro blair kalama pineapple sun monaco parrot canoe vienna chora bengal malabar shikra sa2390,$(TARGET_BOARD_PLATFORM)),)
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss_sw
 else
   PRODUCT_PROPERTY_OVERRIDES += vendor.usb.qdss.inst.name=qdss
@@ -50,7 +50,11 @@ ifneq ($(TARGET_KERNEL_VERSION),$(filter $(TARGET_KERNEL_VERSION),4.9 4.14))
   PRODUCT_PACKAGES += android.hardware.usb-service.qti
 endif
 
-PRODUCT_VENDOR_PROPERTIES += ro.usb.uvc.enabled=true
+ifneq ($(filter lahaina,$(TARGET_BOARD_PLATFORM)),)
+    PRODUCT_VENDOR_PROPERTIES += ro.usb.uvc.enabled=false
+else
+    PRODUCT_VENDOR_PROPERTIES += ro.usb.uvc.enabled=true
+endif
 
 USB_USES_QMAA = $(TARGET_USES_QMAA)
 ifeq ($(TARGET_USES_QMAA_OVERRIDE_USB),true)
@@ -67,7 +71,7 @@ else
   # USB Gadget HAL is enabled on newer targets and takes the place
   # of the init-based configfs rules for setting USB compositions
   #
-  ifneq ($(filter pikachu seraph taro kalama pineapple sun canoe monaco vienna lahaina chora bengal malabar shikra hamoa,$(TARGET_BOARD_PLATFORM)),)
+  ifneq ($(filter pikachu seraph taro kalama pineapple sun canoe monaco vienna lahaina chora bengal malabar shikra sa2390 hamoa,$(TARGET_BOARD_PLATFORM)),)
     PRODUCT_PROPERTY_OVERRIDES += vendor.usb.use_gadget_hal=1
     PRODUCT_PACKAGES += android.hardware.usb.gadget-service.qti
     PRODUCT_PACKAGES += usb_compositions.conf
