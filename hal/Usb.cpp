@@ -52,6 +52,9 @@
 #define USB_CONTROLLER_PROP "vendor.usb.controller"
 #define USB_MODE_PATH "/sys/bus/platform/devices/"
 #define USB_UDC_PATH "/sys/class/udc"
+#define HARDWARE_TYPE_PROP "ro.hardware.type"
+#define AUTOMOTIVE_HARDWARE_TYPE "automotive"
+#define DWC3_AUTOMOTIVE_AUTOSUSPEND_DELAY_MS "1000"
 
 namespace aidl {
 namespace android {
@@ -101,6 +104,39 @@ static void getUsbControllerPath(std::string &controllerPath) {
   }
 }
 
+static bool isAutomotiveTarget() {
+  return GetProperty(HARDWARE_TYPE_PROP, "") == AUTOMOTIVE_HARDWARE_TYPE;
+}
+
+static void setDwc3AutosuspendDelay() {
+  std::string dwcDriver = "/sys/bus/platform/drivers/msm-dwc3/";
+  struct dirent *deviceDir;
+  DIR *gd;
+
+  if (!isAutomotiveTarget())
+    return;
+
+  gd = opendir(dwcDriver.c_str());
+  if (gd == NULL) {
+    ALOGE("setDwc3AutosuspendDelay unable to open %s", dwcDriver.c_str());
+    return;
+  }
+
+  // "susb" matches both hsusb and ssusb controllers, so that autosuspend
+  // delay gets applied to every dwc3 controller instance on the target.
+  while ((deviceDir = readdir(gd))) {
+    if (deviceDir->d_type != DT_LNK || !strstr(deviceDir->d_name, "susb"))
+      continue;
+
+    std::string path = dwcDriver + deviceDir->d_name + "/power/autosuspend_delay_ms";
+    if (!WriteStringToFile(DWC3_AUTOMOTIVE_AUTOSUSPEND_DELAY_MS, path)) {
+      ALOGE("Failed to set autosuspend_delay_ms for %s", deviceDir->d_name);
+    }
+  }
+
+  closedir(gd);
+}
+
 ScopedAStatus Usb::enableUsbData(const std::string& in_portName, bool in_enable,
     int64_t in_transactionId) {
   std::scoped_lock lock(mLock);
@@ -111,7 +147,7 @@ ScopedAStatus Usb::enableUsbData(const std::string& in_portName, bool in_enable,
   ALOGI("enableUsbData in_enable: %d", in_enable);
   getUsbControllerPath(dwcDriver);
   if (dwcDriver == "") {
-    ALOGE("resetUsbPort unable to find dwc device");
+    ALOGE("enableUsbData unable to find dwc device");
     status = Status::ERROR;
     goto out;
   }
@@ -983,6 +1019,7 @@ ScopedAStatus Usb::setCallback(const std::shared_ptr<IUsbCallback>& callback) {
 
   mIgnoreWakeup = checkUsbWakeupSupport();
   checkUsbInHostMode();
+  setDwc3AutosuspendDelay();
 
   /*
    * Check for the correct path to detect contaminant presence status
